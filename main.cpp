@@ -69,23 +69,6 @@ void pruneFilesWordsExact (std::vector<std::string>& words, std::string dir_path
 
 int main () {
 
-
-    /* std::ofstream file("chars.txt", std::ios_base::out | std::ios_base::binary);
-    for (unsigned char i = 128; i < 255; i++) {
-        file << i;
-    }
-    file.close();
-
-    
-    std::ofstream file;
-    for (unsigned char i = 128; i < 255; i++) {
-        std::string ss = "../stupid_files/";
-        ss.push_back(i);
-        file.open(ss, std::ios_base::binary | std::ios_base::out);
-        file << "goonga\n";
-        file.close();
-    }*/
-
     std::string mode;
     std::cout << "Prune mode:\n 1. Prune based on chars.txt (characters found will prune files)\n 2. Prune files not containing words in words.txt\n";
     std::cin >> mode;
