@@ -28,8 +28,9 @@ bool containsWords (std::vector<std::string>& words, std::string s) {
 void pruneFilesWords (std::vector<std::string>& words, std::string dir_path) {
     for (const auto & entry : std::filesystem::directory_iterator(dir_path)) {
         std::string s = entry.path().string();
+        std::cout << s << "\n";
         if (!containsWords(words, s)) {
-            std::remove(s.c_str());
+            std::filesystem::remove_all(s.c_str());
         }
     }
 }
