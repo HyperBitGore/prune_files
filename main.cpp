@@ -16,9 +16,18 @@ void pruneFiles (unsigned char c, std::string dir_path) {
     }
 }
 
-bool containsWords (std::vector<std::string>& words, std::string s) {
+bool containsWordsFind (std::vector<std::string>& words, std::string s) {
     for (auto& i : words) {
         if (s.find(i) != std::string::npos) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool containsWordsExact (std::vector<std::string>& words, std::string s) {
+    for (auto& i : words) {
+        if (s.compare(i) == 0) {
             return true;
         }
     }
@@ -29,7 +38,30 @@ void pruneFilesWords (std::vector<std::string>& words, std::string dir_path) {
     for (const auto & entry : std::filesystem::directory_iterator(dir_path)) {
         std::string s = entry.path().string();
         std::cout << s << "\n";
-        if (!containsWords(words, s)) {
+        if (!containsWordsFind(words, s)) {
+            std::filesystem::remove_all(s.c_str());
+        }
+    }
+}
+
+std::string dropFullPath (std::string s) {
+    int i = (int)s.size() - 1;
+    for (; i >= 0 && s[i] != '/'; i--);
+    std::string str;
+    i++;
+    for (; i < s.size(); i++) {
+        str.push_back(s[i]);
+    }
+    std::cout << str << "\n";
+    return str;
+}
+
+void pruneFilesWordsExact (std::vector<std::string>& words, std::string dir_path) {
+    for (const auto & entry : std::filesystem::directory_iterator(dir_path)) {
+        std::string s = entry.path().string();
+        std::cout << s << "\n";
+        std::string dropped = dropFullPath(s);
+        if (!containsWordsExact(words, dropped)) {
             std::filesystem::remove_all(s.c_str());
         }
     }
@@ -81,6 +113,14 @@ int main () {
             pruneFiles(c, s);
         }
     } else if (mode.compare("2") == 0) {
+        std::string ex;
+        std::cout << "Prune exact?Y/N\n";
+        std::cin >> ex;
+        bool exact = false;
+        if (ex.compare("Y") == 0) {
+            exact = true;
+        }
+
         std::cout <<"opening file\n";
         std::ifstream r_file("words.txt");
         if (!r_file) {
@@ -96,7 +136,11 @@ int main () {
         }
         std::cout << "Pruning files\n";
         r_file.close();
-        pruneFilesWords(words, s);
+        if (exact) {
+            pruneFilesWordsExact(words,s);
+        } else {
+            pruneFilesWords(words, s);
+        }
     }
 
     return 0;
